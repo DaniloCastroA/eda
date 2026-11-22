@@ -1,13 +1,23 @@
-/* =====================================================================
- * grafo.c - Operacoes sobre o grafo (listas e matriz de adjacencias)
- * Legenda: [PDF ...] = trecho vindo dos slides | [ADICIONADO] = novo
- * ===================================================================== */
+/**
+ * @file grafo.c
+ * @brief Operacoes sobre o grafo: criacao, insercao de arestas, impressao
+ *        da matriz e das listas de adjacencias, e liberacao.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "grafo.h"
 
-/* [ADICIONADO] Cria um grafo com nv vertices e nenhuma aresta.
- * Usa a struct _grafo do slide 26 (PDF 10): viz[i] = NULL (lista vazia). */
+/**
+ * @brief Cria um grafo com nv vertices e nenhuma aresta.
+ *
+ * Aloca a struct _grafo do slide e deixa todas as listas vazias
+ * (viz[i] = NULL). Encerra o programa se faltar memoria.
+ *
+ * @param nv numero de vertices (numerados de 0 a nv-1)
+ * @return ponteiro para o grafo criado
+ *
+ * @note Origem: Adicionado (o slide 26 do PDF 10 mostra so a struct).
+ */
 Grafo* grafoCria(int nv) {
    int i;
    Grafo* g = (Grafo*)malloc(sizeof(Grafo));
@@ -21,7 +31,15 @@ Grafo* grafoCria(int nv) {
    return g;
 }
 
-/* [ADICIONADO] Cria um no da lista de vizinhos (struct _viz do slide 26) */
+/**
+ * @brief Cria um no da lista de vizinhos.
+ *
+ * @param noj vertice vizinho
+ * @param peso peso da aresta
+ * @return no alocado, com prox = NULL
+ *
+ * @note Origem: Adicionado (usa a struct _viz do PDF 10, slide 26).
+ */
 static Viz* criaViz(int noj, float peso) {
    Viz* v = (Viz*)malloc(sizeof(Viz));
    if (v == NULL) { printf("Memoria insuficiente\n"); exit(1); }
@@ -31,8 +49,17 @@ static Viz* criaViz(int noj, float peso) {
    return v;
 }
 
-/* [ADICIONADO] Insere v no FINAL da lista (assim a lista fica na mesma
- * ordem em que as arestas foram informadas, facilitando a leitura). */
+/**
+ * @brief Insere um no no final de uma lista de vizinhos.
+ *
+ * Inserir no final mantem a lista na mesma ordem em que as arestas foram
+ * informadas, o que facilita a leitura da saida.
+ *
+ * @param lista endereco do ponteiro para o inicio da lista
+ * @param v no a ser inserido
+ *
+ * @note Origem: Adicionado.
+ */
 static void insereNoFinal(Viz** lista, Viz* v) {
    Viz* p;
    if (*lista == NULL) { *lista = v; return; }
@@ -41,19 +68,36 @@ static void insereNoFinal(Viz** lista, Viz* v) {
    p->prox = v;
 }
 
-/* [ADICIONADO] Insere a aresta {a,b} com peso.
- * Como o grafo do enunciado e NAO dirigido, a aresta {a,b} e um conjunto
- * de 2 vertices (PDF 10, slide 4), entao ela aparece na lista de a e na
- * lista de b (como nas listas de adjacencias do PDF 10, slides 24-25). */
+/**
+ * @brief Insere a aresta nao dirigida {a,b} com o peso informado.
+ *
+ * Em um grafo nao dirigido a aresta e um conjunto de 2 vertices (PDF 10,
+ * slide 4), entao ela e colocada na lista de a e na lista de b, como nas
+ * listas de adjacencias do PDF 10, slides 24-25.
+ *
+ * @param g grafo
+ * @param a uma das extremidades da aresta
+ * @param b a outra extremidade
+ * @param peso peso da aresta
+ *
+ * @note Origem: Adicionado.
+ */
 void grafoInsereAresta(Grafo* g, int a, int b, float peso) {
    insereNoFinal(&g->viz[a], criaViz(b, peso));
    insereNoFinal(&g->viz[b], criaViz(a, peso));
    g->na++;
 }
 
-/* [ADICIONADO] Imprime as listas de adjacencias no formato
- * [i]-> (vizinho, peso) -> ... -> NULL, inspirado no desenho
- * "[0]-> 1 28 -> 5 10 -> •" do PDF 11 (slides 22-30). */
+/**
+ * @brief Imprime as listas de adjacencias de todos os vertices.
+ *
+ * Formato: [i]-> (vizinho, peso) -> ... -> NULL, inspirado no desenho
+ * "[0]-> 1 28 -> 5 10 -> •" do PDF 11, slides 22-30.
+ *
+ * @param g grafo
+ *
+ * @note Origem: Adicionado.
+ */
 void grafoMostraListas(Grafo* g) {
    int i;
    Viz* p;
@@ -65,22 +109,26 @@ void grafoMostraListas(Grafo* g) {
    }
 }
 
-/* [PDF 10, slides 20-23 "Matriz de adjacencias"]
- *     mat[i][j] = 1, se houver uma aresta do no i para o no j
- *                 0, caso contrario
- * A definicao e do slide; o codigo que monta a matriz a partir das
- * listas de adjacencias e [ADICIONADO]. */
+/**
+ * @brief Imprime a matriz de adjacencias do grafo.
+ *
+ * Monta a matriz a partir das listas de adjacencias, seguindo a definicao
+ * mat[i][j] = 1 se houver aresta entre i e j, e 0 caso contrario. Como o
+ * grafo e nao dirigido, a matriz resultante e simetrica.
+ *
+ * @param g grafo
+ *
+ * @note Origem: definicao do PDF 10, slides 20-23; codigo Adicionado.
+ */
 void grafoMostraMatriz(Grafo* g) {
    int i, j;
    Viz* p;
-   /* [ADICIONADO] alocacao e preenchimento da matriz */
    int** mat = (int**)malloc(g->nv * sizeof(int*));
    for (i = 0; i < g->nv; i++) {
       mat[i] = (int*)calloc(g->nv, sizeof(int)); /* tudo 0 */
       for (p = g->viz[i]; p != NULL; p = p->prox)
          mat[i][p->noj] = 1;                      /* existe aresta i-j */
    }
-   /* [ADICIONADO] impressao */
    printf("     ");
    for (j = 0; j < g->nv; j++) printf("%3d", j);
    printf("\n");
@@ -93,7 +141,13 @@ void grafoMostraMatriz(Grafo* g) {
    free(mat);
 }
 
-/* [ADICIONADO] Libera toda a memoria do grafo */
+/**
+ * @brief Libera toda a memoria ocupada pelo grafo.
+ *
+ * @param g grafo (nao deve ser usado depois desta chamada)
+ *
+ * @note Origem: Adicionado.
+ */
 void grafoLibera(Grafo* g) {
    int i;
    Viz *p, *t;

@@ -1,8 +1,8 @@
-/* =====================================================================
- * algoritmos.c - Kruskal (arvore geradora minima) e Dijkstra (menores
- *                distancias a partir de um vertice)
- * Legenda: [PDF ...] = trecho vindo dos slides | [ADICIONADO] = novo
- * ===================================================================== */
+/**
+ * @file algoritmos.c
+ * @brief Kruskal (arvore geradora de custo minimo) e Dijkstra (menores
+ *        distancias a partir de um vertice).
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
@@ -10,26 +10,21 @@
 #include "particao.h"
 #include "bitvet.h"
 
-/* [ADICIONADO] valor usado como "infinito" (simbolo ∞ dos slides) */
+/** @brief Valor usado como "infinito" (simbolo ∞ dos slides). */
 #define INFINITO FLT_MAX
 
-/* =====================================================================
- *                          ALGORITMO DE KRUSKAL
- * [PDF 10, slide 38]
- *   Entrada: Um grafo ponderado G = (V,E,p)
- *   Saida: Arvore geradora de custo minimo
- *   1. Considere cada no em V como uma arvore separada (floresta)
- *   2. Examine a aresta de menor custo.
- *      Se ela unir duas arvores na floresta, inclua-a.
- *   3. Repita o Passo (2) ate todos os nos estarem conectados.
- * [PDF 9, slide 55] "O de Kruskal pode ser obtido atraves de Union-Find.
- *   ... seleciona as arestas de custo minimo no grafo, gerando florestas
- *   que sao ligadas via union-find."
- * Os slides trazem o algoritmo em passos; o codigo C e [ADICIONADO].
- * ===================================================================== */
-
-/* [ADICIONADO] comparacao para o qsort: menor peso primeiro.
- * Em caso de empate, ordena por (u,v) para a saida ser sempre a mesma. */
+/**
+ * @brief Compara duas arestas para o qsort.
+ *
+ * Ordena pelo menor peso; em caso de empate, ordena por (u, v) para que
+ * a saida seja sempre a mesma.
+ *
+ * @param a ponteiro para a primeira Aresta
+ * @param b ponteiro para a segunda Aresta
+ * @return valor negativo, zero ou positivo, como exige o qsort
+ *
+ * @note Origem: Adicionado.
+ */
 static int comparaArestas(const void* a, const void* b) {
    const Aresta* x = (const Aresta*)a;
    const Aresta* y = (const Aresta*)b;
@@ -39,15 +34,36 @@ static int comparaArestas(const void* a, const void* b) {
    return x->v - y->v;
 }
 
+/**
+ * @brief Calcula a arvore geradora de custo minimo pelo algoritmo de
+ *        Kruskal.
+ *
+ * Passos do algoritmo:
+ *  1. Considere cada no em V como uma arvore separada (floresta).
+ *  2. Examine a aresta de menor custo. Se ela unir duas arvores na
+ *     floresta, inclua-a.
+ *  3. Repita o passo 2 ate todos os nos estarem conectados.
+ *
+ * As arestas sao extraidas das listas de adjacencias e ordenadas por peso,
+ * e a floresta e mantida com Union-Find: uma aresta e incluida apenas se
+ * suas extremidades estiverem em arvores diferentes.
+ *
+ * @param g grafo nao dirigido e ponderado
+ * @param arvore vetor de saida com espaco para g->nv - 1 arestas
+ * @param custo saida: soma dos pesos das arestas incluidas
+ * @return numero de arestas incluidas (g->nv - 1 se o grafo for conexo)
+ *
+ * @note Origem: passos do PDF 10, slide 38, e uso de Union-Find do PDF 9,
+ *       slide 55. Os slides nao trazem codigo C; o codigo foi Adicionado.
+ */
 int kruskal(Grafo* g, Aresta* arvore, float* custo) {
    int i, k = 0, na = 0, incluidas = 0;
    Viz* p;
    Aresta* arestas;
    Particao* floresta;
 
-   /* [ADICIONADO] Monta o vetor E de arestas a partir das listas de
-    * adjacencias. Como cada aresta {i,j} aparece nas duas listas, so
-    * pegamos quando i < j para nao repetir. */
+   /* Monta o vetor de arestas a partir das listas de adjacencias. Cada
+    * aresta {i,j} aparece nas duas listas, entao so e pega quando i < j. */
    arestas = (Aresta*)malloc(g->na * sizeof(Aresta));
    for (i = 0; i < g->nv; i++)
       for (p = g->viz[i]; p != NULL; p = p->prox)
@@ -58,19 +74,17 @@ int kruskal(Grafo* g, Aresta* arvore, float* custo) {
             na++;
          }
 
-   /* [ADICIONADO] Ordena as arestas para que "examinar a aresta de menor
-    * custo" (passo 2) seja simplesmente percorrer o vetor em ordem. */
+   /* Ordena para que "examinar a aresta de menor custo" seja percorrer
+    * o vetor em ordem. */
    qsort(arestas, na, sizeof(Aresta), comparaArestas);
 
-   /* [PDF 10, slide 38, passo 1] cada no e uma arvore separada.
-    * Implementado com MakeSet do Union-Find [PDF 9, slides 5 e 9]. */
+   /* Passo 1: cada no e uma arvore separada (MakeSet, PDF 9). */
    floresta = partCria(g->nv);
 
    *custo = 0;
-   /* [PDF 10, slide 38, passos 2 e 3] examina a aresta de menor custo e,
-    * se unir duas arvores, inclui. partUnion [PDF 9] faz os Finds e
-    * devolve 0 quando u e v ja estao na mesma arvore (formaria ciclo).
-    * Repete ate todos conectados = nv-1 arestas incluidas. */
+   /* Passos 2 e 3: partUnion faz os Finds e devolve 0 quando u e v ja
+    * estao na mesma arvore (a aresta formaria ciclo). Para quando ha
+    * nv-1 arestas, ou seja, todos os nos conectados. */
    for (k = 0; k < na && incluidas < g->nv - 1; k++) {
       if (partUnion(floresta, arestas[k].u, arestas[k].v)) {
          arvore[incluidas++] = arestas[k];
@@ -83,20 +97,30 @@ int kruskal(Grafo* g, Aresta* arvore, float* custo) {
    return incluidas;
 }
 
-/* =====================================================================
- *                          ALGORITMO DE DIJKSTRA
- * [PDF 11, slides 19-20] - os passos abaixo estao copiados do slide e
- * aparecem como comentario junto do codigo que os implementa.
- * O codigo C e [ADICIONADO] (os slides nao trazem codigo).
- * A estrutura usada e a dos slides 22-30 do PDF 11: vetor dist[] ao lado
- * das listas de adjacencias (vertex, weight, link).
- * ===================================================================== */
-
+/**
+ * @brief Calcula a menor distancia de origem ate cada vertice do grafo
+ *        pelo algoritmo de Dijkstra.
+ *
+ * Usa o vetor dist[] ao lado das listas de adjacencias e guarda o conjunto
+ * de vertices visitados em um vetor de bits. O proximo vertice corrente e
+ * o nao visitado de menor distancia, escolhido por busca linear, o que da
+ * complexidade O(V^2). Em caso de empate e escolhido o de menor indice.
+ * Os passos do algoritmo estao como comentarios no corpo da funcao.
+ *
+ * @param g grafo com pesos nao negativos
+ * @param origem vertice de partida
+ * @param dist saida: dist[i] = menor distancia de origem ate i
+ *             (FLT_MAX se i nao for alcancavel)
+ * @param ant saida: ant[i] = vertice anterior a i no menor caminho,
+ *            ou -1 para a origem e para vertices nao alcancaveis
+ *
+ * @note Origem: passos do PDF 11, slides 19-20; estrutura dist[] + listas
+ *       do PDF 11, slides 22-30; conjunto de visitados com o BitVector do
+ *       PDF EDA_07_Conjuntos. O codigo C e o vetor ant[] foram Adicionados.
+ */
 void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
    int i, corrente;
    Viz* p;
-   /* [PDF EDA_07_Conjuntos, slides 15-17] conjunto de visitados como
-    * vetor de bits: bvSet = inserir, bvGet = pertence? */
    BitVector* visitados = bvInit(g->nv);
 
    /* 1. Defina o no de origem  (parametro "origem")
@@ -104,7 +128,7 @@ void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
     *    valor zero ao no de origem, e infinito para todos os outros nos. */
    for (i = 0; i < g->nv; i++) {
       dist[i] = INFINITO;
-      ant[i] = -1;            /* [ADICIONADO] para reconstruir o caminho */
+      ant[i] = -1;
    }
    dist[origem] = 0;
 
@@ -128,7 +152,7 @@ void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
          nova = dist[corrente] + p->peso;                         /* 4.1 */
          if (nova < dist[b]) {                                    /* 4.2 */
             dist[b] = nova;
-            ant[b] = corrente;            /* [ADICIONADO] guarda o caminho */
+            ant[b] = corrente;            /* guarda o caminho */
          }
       }
 
@@ -141,8 +165,6 @@ void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
        *    Caso contrario, marque o no nao visitado com a menor distancia
        *    (ao no de origem) como o proximo "no corrente", e repita a
        *    partir do passo 4.
-       *    [ADICIONADO] O conjunto Q de nao visitados e percorrido de forma
-       *    linear (PDF 11, slide 21: a complexidade depende de Q) => O(V^2).
        *    Se so restarem nos com distancia infinita (grafo desconexo),
        *    tambem termina. */
       corrente = -1;
@@ -154,8 +176,17 @@ void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
    bvFree(visitados);
 }
 
-/* [ADICIONADO] Reconstroi o caminho seguindo ant[] do destino ate a
- * origem (recursivamente, para imprimir na ordem origem -> destino). */
+/**
+ * @brief Imprime o caminho da origem ate destino usando o vetor ant[].
+ *
+ * Segue ant[] do destino ate a origem de forma recursiva, para que o
+ * caminho saia na ordem origem -> ... -> destino.
+ *
+ * @param ant vetor de anteriores preenchido por dijkstra()
+ * @param destino vertice final do caminho
+ *
+ * @note Origem: Adicionado.
+ */
 void mostraCaminho(int* ant, int destino) {
    if (ant[destino] != -1) {
       mostraCaminho(ant, ant[destino]);

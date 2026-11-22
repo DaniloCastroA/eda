@@ -1,20 +1,26 @@
-/* =====================================================================
- * main.c - Trabalho de Grafos (INF1010 - Estruturas de Dados Avancadas)
+/**
+ * @file main.c
+ * @brief Trabalho 2 de INF1010 (Estruturas de Dados Avancadas): grafos.
  *
- *  1) Representa o grafo do enunciado como matriz e listas de adjacencias
- *  2) Kruskal: arvore geradora de custo minimo
- *  3) Dijkstra: menor distancia entre o no 8 e os demais nos
+ * 1) Representa o grafo do enunciado como matriz e listas de adjacencias.
+ * 2) Kruskal: arvore geradora de custo minimo.
+ * 3) Dijkstra: menor distancia entre o no 8 e os demais nos.
  *
- * Legenda: [PDF ...] = trecho vindo dos slides | [ADICIONADO] = novo
- * ===================================================================== */
+ * Convencao de origem (tag @note): "PDF ..." indica trecho vindo dos
+ * slides da disciplina e "Adicionado" indica trecho escrito para atingir
+ * o objetivo do enunciado.
+ */
 #include <stdio.h>
 #include "grafo.h"
 #include "algoritmos.h"
 
-#define NV 9        /* [ADICIONADO] vertices 0..8 do grafo do enunciado */
-#define ORIGEM 8    /* [ADICIONADO] origem pedida para o Dijkstra       */
+#define NV 9        /**< vertices 0..8 do grafo do enunciado */
+#define ORIGEM 8    /**< origem pedida para o Dijkstra */
 
-/* [ADICIONADO] arestas do grafo da imagem do enunciado: {u, v, peso} */
+/**
+ * @brief Arestas do grafo da imagem do enunciado, no formato {u, v, peso}.
+ * @note Origem: Adicionado.
+ */
 static const int ARESTAS[][3] = {
    {0, 1, 4},  {0, 7, 8},
    {1, 2, 8},  {1, 7, 11},
@@ -26,6 +32,17 @@ static const int ARESTAS[][3] = {
    {7, 8, 7}
 };
 
+/**
+ * @brief Monta o grafo do enunciado e executa as tres partes do trabalho.
+ *
+ * Imprime a matriz e as listas de adjacencias, as arestas e o custo da
+ * arvore geradora minima (Kruskal) e a menor distancia do no 8 a cada
+ * um dos demais nos, com o caminho correspondente (Dijkstra).
+ *
+ * @return 0 ao terminar
+ *
+ * @note Origem: Adicionado.
+ */
 int main(void) {
    int i, n;
    int na = sizeof(ARESTAS) / sizeof(ARESTAS[0]);
@@ -35,7 +52,7 @@ int main(void) {
    float dist[NV];
    int ant[NV];
 
-   /* ---------------- 1) Representacao do grafo ---------------- */
+   /* 1) Representacao do grafo */
    g = grafoCria(NV);
    for (i = 0; i < na; i++)
       grafoInsereAresta(g, ARESTAS[i][0], ARESTAS[i][1], (float)ARESTAS[i][2]);
@@ -45,14 +62,14 @@ int main(void) {
    printf("\n1) LISTAS DE ADJACENCIAS - (vizinho, peso)\n");
    grafoMostraListas(g);
 
-   /* ---------------- 2) Kruskal ---------------- */
+   /* 2) Kruskal */
    n = kruskal(g, arvore, &custo);
    printf("\n2) KRUSKAL - ARVORE GERADORA MINIMA\n");
    for (i = 0; i < n; i++)
       printf("  %d - %d  (peso %.0f)\n", arvore[i].u, arvore[i].v, arvore[i].peso);
    printf("  Custo total = %.0f\n", custo);
 
-   /* ---------------- 3) Dijkstra ---------------- */
+   /* 3) Dijkstra */
    dijkstra(g, ORIGEM, dist, ant);
    printf("\n3) DIJKSTRA - MENOR DISTANCIA DO NO %d AOS DEMAIS\n", ORIGEM);
    for (i = 0; i < NV; i++) {

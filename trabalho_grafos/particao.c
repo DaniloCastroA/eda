@@ -1,28 +1,40 @@
-/* =====================================================================
- * particao.c - Union-Find com vetor, uniao por altura e compressao
- * Legenda: [PDF ...] = regra/descricao vinda dos slides
- *          [ADICIONADO] = codigo C escrito para o trabalho
- * (O PDF 9 nao tem codigo C: todo o codigo aqui foi escrito a partir das
- *  descricoes dos slides indicados em cada funcao.)
- * ===================================================================== */
+/**
+ * @file particao.c
+ * @brief Implementacao do Union-Find por vetor, com uniao por altura e
+ *        compressao de trajetoria.
+ *
+ * O PDF 9 descreve as operacoes, mas nao traz codigo C; todo o codigo
+ * deste arquivo foi escrito a partir das regras dos slides indicados.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "particao.h"
 
-/* [PDF 9, slides 14-15 "Representacao por Vetor"]
- *  "Cada elemento do vetor e diretamente mapeado para um elemento do
- *   universo; cada elemento possui um apontador para o pai dele;
- *   a raiz possui -1 como valor do ponteiro."
- * [PDF 9, slide 30 "Posto (rank)"] vetor posto[] guarda a altura.     */
+/**
+ * @brief Particao de U = {0..n-1} guardada em vetores.
+ *
+ * Cada elemento aponta para o seu pai; a raiz (representante) tem -1.
+ *
+ * @note Origem: PDF 9, slides 14-15 (representacao por vetor) e slide 30
+ *       (posto). Codigo Adicionado.
+ */
 struct _particao {
-   int n;       /* tamanho do universo U = {0..n-1}          */
-   int* pai;    /* pai[i] = -1 se i e raiz (representante)   */
-   int* posto;  /* altura da arvore (valido para as raizes)  */
+   int n;       /**< tamanho do universo U = {0..n-1} */
+   int* pai;    /**< pai[i] = -1 se i e raiz (representante) */
+   int* posto;  /**< altura da arvore (valido para as raizes) */
 };
 
-/* MakeSet(x) para todos os x [PDF 9, slides 5 e 9]:
- * "Cria um conjunto com um so elemento (singleton): Si = {x}".
- * Configuracao inicial: "uma floresta com n nos (singletons)" (slide 17). */
+/**
+ * @brief Cria n conjuntos unitarios {0}, {1}, ..., {n-1}.
+ *
+ * Equivale a aplicar MakeSet(x) a todos os elementos: a configuracao
+ * inicial e uma floresta de n nos isolados, cada um raiz de si mesmo.
+ *
+ * @param n quantidade de elementos
+ * @return particao alocada
+ *
+ * @note Origem: PDF 9, slides 5, 9 e 17; codigo Adicionado.
+ */
 Particao* partCria(int n) {
    int i;
    Particao* p = (Particao*)malloc(sizeof(Particao));
@@ -30,22 +42,32 @@ Particao* partCria(int n) {
    p->pai = (int*)malloc(n * sizeof(int));
    p->posto = (int*)malloc(n * sizeof(int));
    for (i = 0; i < n; i++) {
-      p->pai[i] = -1;   /* cada no e raiz de si mesmo (slide 15) */
-      p->posto[i] = 0;  /* altura 0                            */
+      p->pai[i] = -1;   /* cada no e raiz de si mesmo */
+      p->posto[i] = 0;  /* altura 0 */
    }
    return p;
 }
 
-/* Find(x) [PDF 9, slides 5, 10 e 12]:
- *  "busca a raiz da arvore que contem o elemento".
- * + Compressao de trajetoria [PDF 9, slide 35]:
- *  "Se j e um no no caminho de i ate sua raiz, faca j apontar para raiz". */
+/**
+ * @brief Devolve o representante do conjunto que contem x.
+ *
+ * Sobe pelos pais ate a raiz e, em seguida, aplica a compressao de
+ * trajetoria: todo no do caminho de x ate a raiz passa a apontar
+ * diretamente para a raiz, encurtando as proximas buscas.
+ *
+ * @param p particao
+ * @param x elemento consultado
+ * @return raiz da arvore que contem x
+ *
+ * @note Origem: PDF 9, slides 5, 10 e 12 (Find) e slide 35 (compressao
+ *       de trajetoria); codigo Adicionado.
+ */
 int partFind(Particao* p, int x) {
    int raiz = x, j, prox;
    /* 1a passada: sobe ate a raiz (pai == -1) */
    while (p->pai[raiz] != -1)
       raiz = p->pai[raiz];
-   /* 2a passada: compressao - cada no do caminho passa a apontar p/ raiz */
+   /* 2a passada: cada no do caminho passa a apontar para a raiz */
    j = x;
    while (j != raiz) {
       prox = p->pai[j];
@@ -55,31 +77,46 @@ int partFind(Particao* p, int x) {
    return raiz;
 }
 
-/* Union(x,y) [PDF 9, slides 5 e 11]: "faz a raiz de um grupo apontar
- * para a raiz do outro grupo".
- * Union seguro [slide 18]: executa Find dentro do Union para achar raizes.
- * Uniao por altura [slides 23-25]: "conjunto mais baixo e pendurado no
- * mais alto (altura nao cresce); em caso de empate e indiferente (altura
- * cresce de 1)".
- * Retorno [ADICIONADO]: 1 se uniu dois conjuntos diferentes, 0 se x e y
- * ja estavam no mesmo conjunto (usado pelo Kruskal para detectar ciclo). */
+/**
+ * @brief Une os conjuntos que contem x e y.
+ *
+ * Encontra as raizes com Find (union seguro) e pendura a arvore mais
+ * baixa na mais alta, para a altura nao crescer. Em caso de empate a
+ * escolha e indiferente e a altura da nova raiz cresce de 1.
+ *
+ * @param p particao
+ * @param x elemento do primeiro conjunto
+ * @param y elemento do segundo conjunto
+ * @return 1 se uniu dois conjuntos diferentes, ou 0 se x e y ja estavam
+ *         no mesmo conjunto (no Kruskal, isso indica que formaria ciclo)
+ *
+ * @note Origem: PDF 9, slides 5 e 11 (Union), slide 18 (union seguro) e
+ *       slides 23-25 (uniao por altura); codigo e valor de retorno
+ *       Adicionados.
+ */
 int partUnion(Particao* p, int x, int y) {
    int rx = partFind(p, x);
    int ry = partFind(p, y);
    if (rx == ry)
-      return 0;                       /* mesmo conjunto: nada a fazer   */
+      return 0;                       /* mesmo conjunto: nada a fazer */
    if (p->posto[rx] < p->posto[ry]) {
       p->pai[rx] = ry;                /* rx (mais baixo) pendurado em ry */
    } else if (p->posto[rx] > p->posto[ry]) {
       p->pai[ry] = rx;                /* ry (mais baixo) pendurado em rx */
    } else {
-      p->pai[ry] = rx;                /* empate: indiferente...          */
-      p->posto[rx]++;                 /* ...e a altura cresce de 1       */
+      p->pai[ry] = rx;                /* empate: indiferente... */
+      p->posto[rx]++;                 /* ...e a altura cresce de 1 */
    }
    return 1;
 }
 
-/* [ADICIONADO] */
+/**
+ * @brief Libera a memoria da particao.
+ *
+ * @param p particao (nao deve ser usada depois desta chamada)
+ *
+ * @note Origem: Adicionado.
+ */
 void partLibera(Particao* p) {
    free(p->pai);
    free(p->posto);
