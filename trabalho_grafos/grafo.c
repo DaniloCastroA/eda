@@ -16,7 +16,6 @@
  * @param nv numero de vertices (numerados de 0 a nv-1)
  * @return ponteiro para o grafo criado
  *
- * @note Origem: Adicionado (o slide 26 do PDF 10 mostra so a struct).
  */
 Grafo* grafoCria(int nv) {
    int i;
@@ -38,7 +37,6 @@ Grafo* grafoCria(int nv) {
  * @param peso peso da aresta
  * @return no alocado, com prox = NULL
  *
- * @note Origem: Adicionado (usa a struct _viz do PDF 10, slide 26).
  */
 static Viz* criaViz(int noj, float peso) {
    Viz* v = (Viz*)malloc(sizeof(Viz));
@@ -58,7 +56,6 @@ static Viz* criaViz(int noj, float peso) {
  * @param lista endereco do ponteiro para o inicio da lista
  * @param v no a ser inserido
  *
- * @note Origem: Adicionado.
  */
 static void insereNoFinal(Viz** lista, Viz* v) {
    Viz* p;
@@ -80,7 +77,6 @@ static void insereNoFinal(Viz** lista, Viz* v) {
  * @param b a outra extremidade
  * @param peso peso da aresta
  *
- * @note Origem: Adicionado.
  */
 void grafoInsereAresta(Grafo* g, int a, int b, float peso) {
    insereNoFinal(&g->viz[a], criaViz(b, peso));
@@ -96,7 +92,6 @@ void grafoInsereAresta(Grafo* g, int a, int b, float peso) {
  *
  * @param g grafo
  *
- * @note Origem: Adicionado.
  */
 void grafoMostraListas(Grafo* g) {
    int i;
@@ -118,7 +113,6 @@ void grafoMostraListas(Grafo* g) {
  *
  * @param g grafo
  *
- * @note Origem: definicao do PDF 10, slides 20-23; codigo Adicionado.
  */
 void grafoMostraMatriz(Grafo* g) {
    int i, j;
@@ -146,7 +140,6 @@ void grafoMostraMatriz(Grafo* g) {
  *
  * @param g grafo (nao deve ser usado depois desta chamada)
  *
- * @note Origem: Adicionado.
  */
 void grafoLibera(Grafo* g) {
    int i;
