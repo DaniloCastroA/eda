@@ -13,7 +13,6 @@
 
 /**
  * @brief Conjunto de ate max elementos guardado em um vetor de ints.
- * @note Origem: PDF EDA_07_Conjuntos, slide 16. Copiado do slide.
  */
 struct _bitvector {
        int max;
@@ -27,8 +26,6 @@ struct _bitvector {
  *
  * @param max quantidade maxima de elementos (0 a max-1)
  * @return conjunto alocado, inicialmente vazio
- *
- * @note Origem: PDF EDA_07_Conjuntos, slide 16. Copiado do slide.
  */
 BitVector* bvInit(int max) {
        int i,size = sizeof(int);
@@ -50,8 +47,6 @@ BitVector* bvInit(int max) {
  * @param bv conjunto
  * @param i elemento consultado
  * @return 1 se i pertence ao conjunto, 0 caso contrario
- *
- * @note Origem: PDF EDA_07_Conjuntos, slide 17. Copiado do slide.
  */
 int bvGet(BitVector* bv,int i){
   int res=(bv->vector[i/sizeof(int)])&(1 << i%sizeof(int));
@@ -63,8 +58,6 @@ int bvGet(BitVector* bv,int i){
  *
  * @param bv conjunto
  * @param i elemento a inserir
- *
- * @note Origem: PDF EDA_07_Conjuntos, slide 17. Copiado do slide.
  */
 void bvSet(BitVector* bv,int i){
        bv->vector[i/sizeof(int)] |= 1 << i%sizeof(int);
@@ -75,9 +68,6 @@ void bvSet(BitVector* bv,int i){
  *
  * @param bv conjunto
  * @param title texto impresso antes da lista de elementos
- *
- * @note Origem: declarada na interface do PDF EDA_07_Conjuntos, slide 15;
- *       a implementacao, que nao aparece no slide, foi Adicionada.
  */
 void bvShow(BitVector* bv, char* title) {
        int i;
@@ -91,8 +81,6 @@ void bvShow(BitVector* bv, char* title) {
  * @brief Libera a memoria do conjunto.
  *
  * @param bv conjunto (nao deve ser usado depois desta chamada)
- *
- * @note Origem: Adicionado.
  */
 void bvFree(BitVector* bv) {
        free(bv->vector);

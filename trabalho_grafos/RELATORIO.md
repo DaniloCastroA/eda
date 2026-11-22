@@ -14,8 +14,7 @@ Grafo **não dirigido e ponderado** G = (V, E, p) com 9 vértices (0 a 8) e 14 a
 | 2–5 | 4 | 6–8 | 6 |
 | 2–8 | 2 | 7–8 | 7 |
 
-Convenção usada no código: documentação no estilo Doxygen; em cada função, a tag
-`@note Origem:` indica se o trecho veio dos slides (arquivo + slide) ou se foi adicionado.
+O código é documentado no estilo Doxygen (`@file`, `@brief`, `@param`, `@return`).
 
 ---
 

@@ -5,10 +5,6 @@
  * 1) Representa o grafo do enunciado como matriz e listas de adjacencias.
  * 2) Kruskal: arvore geradora de custo minimo.
  * 3) Dijkstra: menor distancia entre o no 8 e os demais nos.
- *
- * Convencao de origem (tag @note): "PDF ..." indica trecho vindo dos
- * slides da disciplina e "Adicionado" indica trecho escrito para atingir
- * o objetivo do enunciado.
  */
 #include <stdio.h>
 #include "grafo.h"
@@ -19,7 +15,6 @@
 
 /**
  * @brief Arestas do grafo da imagem do enunciado, no formato {u, v, peso}.
- * @note Origem: Adicionado.
  */
 static const int ARESTAS[][3] = {
    {0, 1, 4},  {0, 7, 8},
@@ -40,8 +35,6 @@ static const int ARESTAS[][3] = {
  * um dos demais nos, com o caminho correspondente (Dijkstra).
  *
  * @return 0 ao terminar
- *
- * @note Origem: Adicionado.
  */
 int main(void) {
    int i, n;

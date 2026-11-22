@@ -15,7 +15,6 @@
  *
  * @param nv numero de vertices (numerados de 0 a nv-1)
  * @return ponteiro para o grafo criado
- *
  */
 Grafo* grafoCria(int nv) {
    int i;
@@ -36,7 +35,6 @@ Grafo* grafoCria(int nv) {
  * @param noj vertice vizinho
  * @param peso peso da aresta
  * @return no alocado, com prox = NULL
- *
  */
 static Viz* criaViz(int noj, float peso) {
    Viz* v = (Viz*)malloc(sizeof(Viz));
@@ -55,7 +53,6 @@ static Viz* criaViz(int noj, float peso) {
  *
  * @param lista endereco do ponteiro para o inicio da lista
  * @param v no a ser inserido
- *
  */
 static void insereNoFinal(Viz** lista, Viz* v) {
    Viz* p;
@@ -76,7 +73,6 @@ static void insereNoFinal(Viz** lista, Viz* v) {
  * @param a uma das extremidades da aresta
  * @param b a outra extremidade
  * @param peso peso da aresta
- *
  */
 void grafoInsereAresta(Grafo* g, int a, int b, float peso) {
    insereNoFinal(&g->viz[a], criaViz(b, peso));
@@ -88,10 +84,9 @@ void grafoInsereAresta(Grafo* g, int a, int b, float peso) {
  * @brief Imprime as listas de adjacencias de todos os vertices.
  *
  * Formato: [i]-> (vizinho, peso) -> ... -> NULL, inspirado no desenho
- * "[0]-> 1 28 -> 5 10 -> •" do PDF 11, slides 22-30.
+ * "[0]-> 1 28 -> 5 10 -> NULL" do PDF 11, slides 22-30.
  *
  * @param g grafo
- *
  */
 void grafoMostraListas(Grafo* g) {
    int i;
@@ -112,7 +107,6 @@ void grafoMostraListas(Grafo* g) {
  * grafo e nao dirigido, a matriz resultante e simetrica.
  *
  * @param g grafo
- *
  */
 void grafoMostraMatriz(Grafo* g) {
    int i, j;
@@ -139,7 +133,6 @@ void grafoMostraMatriz(Grafo* g) {
  * @brief Libera toda a memoria ocupada pelo grafo.
  *
  * @param g grafo (nao deve ser usado depois desta chamada)
- *
  */
 void grafoLibera(Grafo* g) {
    int i;

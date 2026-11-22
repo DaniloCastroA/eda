@@ -11,7 +11,6 @@
 /**
  * @brief Aresta {u,v} com peso, usada para ordenar as arestas no Kruskal
  *        e para devolver a arvore geradora.
- * @note Origem: Adicionado.
  */
 typedef struct {
    int u;       /**< uma extremidade da aresta */

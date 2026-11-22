@@ -14,9 +14,6 @@
  * @brief Particao de U = {0..n-1} guardada em vetores.
  *
  * Cada elemento aponta para o seu pai; a raiz (representante) tem -1.
- *
- * @note Origem: PDF 9, slides 14-15 (representacao por vetor) e slide 30
- *       (posto). Codigo Adicionado.
  */
 struct _particao {
    int n;       /**< tamanho do universo U = {0..n-1} */
@@ -32,8 +29,6 @@ struct _particao {
  *
  * @param n quantidade de elementos
  * @return particao alocada
- *
- * @note Origem: PDF 9, slides 5, 9 e 17; codigo Adicionado.
  */
 Particao* partCria(int n) {
    int i;
@@ -58,9 +53,6 @@ Particao* partCria(int n) {
  * @param p particao
  * @param x elemento consultado
  * @return raiz da arvore que contem x
- *
- * @note Origem: PDF 9, slides 5, 10 e 12 (Find) e slide 35 (compressao
- *       de trajetoria); codigo Adicionado.
  */
 int partFind(Particao* p, int x) {
    int raiz = x, j, prox;
@@ -89,10 +81,6 @@ int partFind(Particao* p, int x) {
  * @param y elemento do segundo conjunto
  * @return 1 se uniu dois conjuntos diferentes, ou 0 se x e y ja estavam
  *         no mesmo conjunto (no Kruskal, isso indica que formaria ciclo)
- *
- * @note Origem: PDF 9, slides 5 e 11 (Union), slide 18 (union seguro) e
- *       slides 23-25 (uniao por altura); codigo e valor de retorno
- *       Adicionados.
  */
 int partUnion(Particao* p, int x, int y) {
    int rx = partFind(p, x);
@@ -114,8 +102,6 @@ int partUnion(Particao* p, int x, int y) {
  * @brief Libera a memoria da particao.
  *
  * @param p particao (nao deve ser usada depois desta chamada)
- *
- * @note Origem: Adicionado.
  */
 void partLibera(Particao* p) {
    free(p->pai);

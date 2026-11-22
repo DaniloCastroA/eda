@@ -17,9 +17,7 @@ O relatório está em [`RELATORIO.md`](RELATORIO.md) e a saída completa do prog
 | `main.c` | monta o grafo do enunciado e executa tudo | adicionado |
 
 O código é documentado no estilo Doxygen (`@file`, `@brief`, `@param`,
-`@return`). Em cada função, a tag `@note Origem:` indica se o trecho veio dos
-slides (arquivo + número do slide) ou se foi adicionado para atingir o
-objetivo do enunciado.
+`@return`).
 
 ## Execução
 

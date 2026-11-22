@@ -10,7 +10,7 @@
 #include "particao.h"
 #include "bitvet.h"
 
-/** @brief Valor usado como "infinito" (simbolo ∞ dos slides). */
+/** @brief Valor usado como "infinito" (simbolo de infinito dos slides). */
 #define INFINITO FLT_MAX
 
 /**
@@ -22,8 +22,6 @@
  * @param a ponteiro para a primeira Aresta
  * @param b ponteiro para a segunda Aresta
  * @return valor negativo, zero ou positivo, como exige o qsort
- *
- * @note Origem: Adicionado.
  */
 static int comparaArestas(const void* a, const void* b) {
    const Aresta* x = (const Aresta*)a;
@@ -52,9 +50,6 @@ static int comparaArestas(const void* a, const void* b) {
  * @param arvore vetor de saida com espaco para g->nv - 1 arestas
  * @param custo saida: soma dos pesos das arestas incluidas
  * @return numero de arestas incluidas (g->nv - 1 se o grafo for conexo)
- *
- * @note Origem: passos do PDF 10, slide 38, e uso de Union-Find do PDF 9,
- *       slide 55. Os slides nao trazem codigo C; o codigo foi Adicionado.
  */
 int kruskal(Grafo* g, Aresta* arvore, float* custo) {
    int i, k = 0, na = 0, incluidas = 0;
@@ -113,10 +108,6 @@ int kruskal(Grafo* g, Aresta* arvore, float* custo) {
  *             (FLT_MAX se i nao for alcancavel)
  * @param ant saida: ant[i] = vertice anterior a i no menor caminho,
  *            ou -1 para a origem e para vertices nao alcancaveis
- *
- * @note Origem: passos do PDF 11, slides 19-20; estrutura dist[] + listas
- *       do PDF 11, slides 22-30; conjunto de visitados com o BitVector do
- *       PDF EDA_07_Conjuntos. O codigo C e o vetor ant[] foram Adicionados.
  */
 void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
    int i, corrente;
@@ -184,8 +175,6 @@ void dijkstra(Grafo* g, int origem, float* dist, int* ant) {
  *
  * @param ant vetor de anteriores preenchido por dijkstra()
  * @param destino vertice final do caminho
- *
- * @note Origem: Adicionado.
  */
 void mostraCaminho(int* ant, int destino) {
    if (ant[destino] != -1) {

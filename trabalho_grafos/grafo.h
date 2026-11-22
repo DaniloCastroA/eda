@@ -2,19 +2,12 @@
  * @file grafo.h
  * @brief Representacao de grafo nao dirigido e ponderado por listas de
  *        adjacencias.
- *
- * Convencao de origem usada em todo o trabalho (tag @note):
- *  - "PDF ..."    : trecho copiado/adaptado dos slides da disciplina
- *  - "Adicionado" : trecho escrito para atingir o objetivo do enunciado
  */
 #ifndef GRAFO_H
 #define GRAFO_H
 
 /**
  * @brief No de uma lista de adjacencias (um vizinho do vertice).
- *
- * @note Origem: PDF 10 (Definicoes e algoritmos sobre grafos), slide 26,
- *       "o que vamos usar no lab". Copiado literalmente.
  */
 typedef struct _viz Viz;
 struct _viz {
@@ -25,8 +18,6 @@ struct _viz {
 
 /**
  * @brief Grafo representado por um vetor de listas de adjacencias.
- *
- * @note Origem: PDF 10, slide 26. Copiado literalmente.
  */
 struct _grafo {
    int nv;    /* numero de nos ou vertices */
@@ -36,7 +27,6 @@ struct _grafo {
 
 /**
  * @brief Nome curto para a struct _grafo do slide.
- * @note Origem: Adicionado.
  */
 typedef struct _grafo Grafo;
 

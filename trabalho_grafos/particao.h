@@ -5,12 +5,6 @@
  *
  * Usada pelo Kruskal para saber se uma aresta une duas arvores diferentes
  * da floresta ou se formaria um ciclo.
- *
- * @note Origem: regras do PDF 9 (Particao de conjuntos): operacoes basicas
- *       (slide 5), representacao por vetor (slides 14-15), union seguro
- *       (slide 18), uniao por altura (slides 23-30), compressao de
- *       trajetoria (slide 35) e uso no Kruskal (slides 52-55). O PDF nao
- *       traz codigo C; a implementacao foi Adicionada seguindo essas regras.
  */
 #ifndef PARTICAO_H
 #define PARTICAO_H
